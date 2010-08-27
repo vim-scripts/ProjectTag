@@ -1,5 +1,5 @@
 # File: ProjectTag/ProjectTag.py
-# Version: 0.1
+# Version: 0.1.1
 
 import sys
 import re
@@ -74,7 +74,11 @@ def __get_included_files_reclusively(src, include_dirs, checked_files):
 
     # get the included file paths
     header_files = get_included_files( f.readlines() )
-    for include_dir in include_dirs:
+
+    # add the directory where the source file locates to include directory list
+    include_dirs2 = include_dirs[:]
+    include_dirs2.append( os.path.dirname(src) )
+    for include_dir in include_dirs2:
         for header_file in header_files:
 
             file_path = include_dir + os.path.sep + header_file # the path of new file
@@ -203,25 +207,4 @@ class ProjectConfig(ConfigParser.ConfigParser):
 
             ret |= get_included_files_reclusively(src, include_dirs)
 
-
         return ret
-
-
-        
-
-#pp = ProjectConfig('test.ini')
-#print pp.get_files_to_tag()
-
-
-#try:
-    #f = open("DataViewAnyRenderer.cpp","r")
-#except IOError, message:
-    #print >> sys.stderr, "File open error:", message
-    #sys.exit(1)
-#print get_included_files(f.readlines())
-#pp = ProjectConfig()
-#pp.read('full.guil')
-#pp.set_project_config_parser_default_value()
-##print pp.items('general')
-#print pp.get_files_to_tag()
-#pp.generate_tags()

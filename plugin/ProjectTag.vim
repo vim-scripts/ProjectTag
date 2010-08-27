@@ -1,5 +1,5 @@
 " File: plugin/ProjectTag.vim
-" Version: 0.1
+" Version: 0.1.1
 
 if v:version < 700
     finish

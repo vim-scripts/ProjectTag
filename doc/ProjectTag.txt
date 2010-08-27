@@ -1,9 +1,9 @@
 *ProjectTag.txt*
 
 File: doc/ProjectTag.txt
-Version: 0.1
-Author: Hong Xu(xuhdev AT gmail DOT com)
-Last Change: 26 August, 2010
+Version: 0.1.1
+Author: H Xu(xuhdev AT gmail DOT com)
+Last Change: 27 August, 2010
 Description: This plugin aims at generating tags for a whole project. 
 License: You can redistribute this plugin and/or modify it under the terms 
          of the GNU General Public License as published by the Free Software 
