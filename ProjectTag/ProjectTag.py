@@ -1,5 +1,5 @@
 # File: ProjectTag/ProjectTag.py
-# Version: 0.1.1
+# Version: 0.1.2
 
 import sys
 import re
@@ -122,7 +122,10 @@ class ProjectConfig(ConfigParser.ConfigParser):
     # search upper to find this file
 
     # the directory where the project file locates
-    project_dir = ''
+    project_dir = None
+
+    def does_config_file_exist(self):
+        return self.project_dir != None
 
     def __init__( self, project_file_name ):
 
@@ -140,6 +143,11 @@ class ProjectConfig(ConfigParser.ConfigParser):
 
     # generate tags
     def generate_tags(self):
+
+        # do nothing if config file does not exist
+        if not self.does_config_file_exist():
+            return
+
         tagoutput = self.get('general', 'tagoutput')
         tagoutput = self.project_dir + os.path.sep + tagoutput
         tagflag = self.get('general', 'tagflag')
@@ -171,8 +179,8 @@ class ProjectConfig(ConfigParser.ConfigParser):
 
     # find the tags output file and add it to tags
     def add_tag_file(self):
-        # do nothing if project_dir is not defined
-        if self.project_dir == '':
+        # do nothing if config file does not exist
+        if not self.does_config_file_exist():
             return
 
         tagoutput = self.get( 'general', 'tagoutput' ).strip()
@@ -189,6 +197,11 @@ class ProjectConfig(ConfigParser.ConfigParser):
         
     # return a list of files to tag
     def get_files_to_tag(self):
+
+        # do nothing if config file does not exist
+        if not self.does_config_file_exist():
+            return
+
         sources = [s.strip() for s in self.get('general','sources').split(',')]
         include_dirs = [s.strip() for s in self.get('general','include_dirs').split(',')]
         ret = set()

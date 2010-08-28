@@ -1,5 +1,7 @@
 " File: plugin/ProjectTag.vim
-" Version: 0.1.1
+" Version: 0.1.2
+" check doc/ProjectTag.txt for more version information
+" GetLatestVimScripts: 3219 1 :AutoInstall: ProjectTag.zip
 
 if v:version < 700
     finish
@@ -59,6 +61,11 @@ function s:GenerateProjectTags( back_ground )
 
 python << EEOOFF
 pc = ProjectTag.ProjectConfig( vim.eval('s:default_project_name') )
+
+# if the config file does not exist, return immediately
+if not pc.does_config_file_exist():
+    vim.command('echohl ErrorMsg | echo "project file not found!" | echohl None')
+    vim.command('return')
 
 if ProjectTagGlobal.tag_thread != None and ProjectTagGlobal.tag_thread.isAlive():
     vim.command('return')
