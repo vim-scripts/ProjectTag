@@ -1,5 +1,5 @@
 # File: ProjectTag/ProjectTag.py
-# Version: 0.1.2
+# Version: 0.1.3
 
 import sys
 import re

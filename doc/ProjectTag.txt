@@ -1,9 +1,9 @@
 *ProjectTag.txt*
 
 File: doc/ProjectTag.txt
-Version: 0.1.2
+Version: 0.1.3
 Author: H Xu(xuhdev AT gmail DOT com)
-Last Change: 28 August, 2010
+Last Change: 3 September, 2010
 Description: This plugin aims at generating tags for a whole project. 
 License: You can redistribute this plugin and/or modify it under the terms 
          of the GNU General Public License as published by the Free Software 
@@ -43,12 +43,36 @@ tagprog=ctags_command
 tagflag=--your-tag-flags
 =========
 
-Replace source1,source2,... with your source file;
+Replace source1,source2,... with your source file, such as main.c,
+src/foo.cpp;
+
 replace include_dir1,include_dir2,... with your include directories, such as
 /usr/include, /usr/local/include (not required for non C/C++ project, in fact,
 even for C/C++ project, it is also optional);
+
 replace ctags_command with your ctags command, such as ctags, /usr/bin/ctags;
+
 replace --your-tag-flags with your tag flags, such as --extra=+q.
+
+
+For example, for the following source tree:
+
+- src/
+  main.c
+  foo.c
+  bar.c
+- include/
+  foo.h
+  bar.h
+
+The project file could be like the following:
+=========
+[general]
+sources=src/main.c,src/foo.c,src/bar.c
+include_dirs=./include,/usr/include
+tagprog=ctags
+tagflag=--extra=+q
+=========
 
 Then save the file.
 
