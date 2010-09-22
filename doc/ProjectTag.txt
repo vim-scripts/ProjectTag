@@ -1,9 +1,9 @@
 *ProjectTag.txt*
 
 File: doc/ProjectTag.txt
-Version: 0.1.3
+Version: 0.1.4
 Author: H Xu(xuhdev AT gmail DOT com)
-Last Change: 3 September, 2010
+Last Change: 22 September, 2010
 Description: This plugin aims at generating tags for a whole project. 
 License: You can redistribute this plugin and/or modify it under the terms 
          of the GNU General Public License as published by the Free Software 
@@ -24,9 +24,11 @@ OVERVIEW~
 This plugin aims at generating tags for a whole project. 
 Python support is required for this plugin to run.
 
-For C/C++ projects, this plugin also parses the headers cited in your source
-code, so a tag file providing information of all sources files in your project
-and header files included in your sources would be generated. 
+For C/C++ projects, there's no need to generate a seperate tag file for the
+included header files any more! This plugin will also parses the header files
+cited in your source code, so a tag file providing information of all sources
+files in your project and header files included in your sources would be
+generated. 
 
 
 TUTORIAL~
