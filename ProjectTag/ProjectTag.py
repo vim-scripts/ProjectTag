@@ -1,5 +1,5 @@
 # File: ProjectTag/ProjectTag.py
-# Version: 0.1.4
+# Version: 0.1.5
 
 import sys
 import re
@@ -17,7 +17,7 @@ def search_for_file_upper( cur_dir, file_name ):
 
     cur_dir_local = os.path.abspath( cur_dir )
     
-    while 1:
+    while True:
         cur_check = cur_dir_local + os.path.sep + file_name
         if os.path.isfile( cur_check ): # if cur path meets the condition, then return the path
             return cur_check
@@ -119,8 +119,7 @@ def generate_tags_ctags( file_set, outfile, flags, tag_prog_cmd='ctags' ):
 
     sp.communicate( input = file_list )
 
-    return 0
-
+    return
 
 # the config parser for project ini file
 class ProjectConfig( ConfigParser.ConfigParser ):
@@ -137,7 +136,7 @@ class ProjectConfig( ConfigParser.ConfigParser ):
 
         ConfigParser.ConfigParser.__init__( self )
 
-        project_file_path = search_for_file_upper( '.', project_file_name )
+        project_file_path = search_for_file_upper( vim.eval( "expand('%:p:h')" ), project_file_name )
         if project_file_path == None:
             return
 
