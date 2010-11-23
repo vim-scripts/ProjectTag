@@ -1,5 +1,5 @@
 " File: plugin/ProjectTag.vim
-" Version: 0.1.5
+" Version: 0.1.6
 " GetLatestVimScripts: 3219 1 :AutoInstall: ProjectTag.zip
 " check doc/ProjectTag.txt for more version information
 
@@ -43,10 +43,8 @@ try:
 
     import ProjectTag
 
-    # used to restore global variables
-    class ProjectTagGlobal:
-        # the ctags thread
-        tag_thread = None
+    # the default project name
+    ProjectTag.default_project_name = vim.eval( 's:default_project_name' )
 
     # add the tag file
     pc = ProjectTag.ProjectConfig( vim.eval('s:default_project_name') )
@@ -76,46 +74,15 @@ endif
 " autocmd {{{1
 " automatically add the tags file when entering a buffer
 autocmd BufEnter * python ProjectTag.ProjectConfig( vim.eval('s:default_project_name') ).add_tag_file()
+" regard project.prom as ini files
+autocmd BufEnter project.prom setlocal ft=dosini
 
 " functions {{{1
 
 " generate tags
 function s:GenerateProjectTags( back_ground )
 
-python << EEOOFF
-pc = ProjectTag.ProjectConfig( vim.eval('s:default_project_name') )
-
-# if the config file does not exist, return immediately
-if not pc.does_config_file_exist():
-    vim.command('echohl ErrorMsg | echo "Project file not found!" | echohl None')
-    vim.command('return')
-
-if ProjectTagGlobal.tag_thread != None and ProjectTagGlobal.tag_thread.isAlive():
-    vim.command('return')
-
-ProjectTagGlobal.tag_thread = threading.Thread( target=ProjectTag.ProjectConfig.generate_tags, args=(pc,) )
-ProjectTagGlobal.tag_thread.daemon = True
-ProjectTagGlobal.tag_thread.start()
-
-EEOOFF
-    
-    " if run foreground
-    if a:back_ground == 0
-
-python << EEOOFF
-
-ProjectTagGlobal.tag_thread.join()
-
-EEOOFF
-
-    endif
-
-python << EEOOFF
-
-# after generating the tag, add the tag file to tags
-pc.add_tag_file()
-
-EEOOFF
+    exec 'py ProjectTag.generate_pro_tags( '.a:back_ground.' )'
 
 endfunction
 

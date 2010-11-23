@@ -1,18 +1,24 @@
 This is a mirror of http://www.vim.org/scripts/script.php?script_id=3219
 
-This plugin aims at generating tags for a whole project. 
+This plugin is aimed at generating tags for a whole project. 
 Exuberant Ctags is required for this plugin:
 http://ctags.sourceforge.net/
-This plugin is quite useful when used with omnicomplete plugins, such as: 
-OmniCppComplete: http://www.vim.org/scripts/script.php?script_id=1520
-pythoncomplete: http://www.vim.org/scripts/script.php?script_id=1542
-vim must be compiled with python support for this plugin to run. At least python 2.4 is required. Python 3.x is not supported currently.
+This plugin is quite useful when used with omnicomplete plugins, such as 
+OmniCppComplete(vimscript #1520), 
+pythoncomplete(vimscript #1542), 
+javacomplete(vimscript #1785).
+vim must be compiled with python support for this plugin to run. At least
+python 2.4 is required. Python 3.x is not supported currently.
 
 For C/C++ projects, there's no need to generate a seperate tag file for the
 included header files any more! This plugin will also parses the header files
 cited in your source code, so a tag file providing information of all sources
 files in your project and header files included in your sources would be
 generated. 
+
+This plugin could also generate tags in background by using python 
+multithread library, so your editing work would not be blocked when 
+generating tag files.
 
 
 The following is a short tutorial.
@@ -43,9 +49,9 @@ replace --your-tag-flags with your tag flags, such as --extra=+q.
 For example, for the following source tree:
 
 - src/
-  main.c
-  foo.c
-  bar.c
+  main.cpp
+  foo.cpp
+  bar.cpp
 - include/
   foo.h
   bar.h
@@ -53,22 +59,21 @@ For example, for the following source tree:
 The project file could be like the following:
 =========
 [general]
-sources=src/main.c,src/foo.c,src/bar.c
+sources=src/main.cpp, src/foo.cpp, src/bar.cpp
 include_dirs=./include,/usr/include
 tagprog=ctags
-tagflag=--extra=+q
+tagflag=--extra=+q --c++-kinds=+p --fields=+iaS 
 =========
-
+              
 Then save the file.
 
-Use vim to open a source file, such as source1.cpp. Use the command
+Use vim to open a source file, such as foo.cpp. Use the command
 ":GenProTags" to generate the tag file(this might be some kind of slow). if
 you don't want to be blocked when generating the tag file, use ":GenProTagsBg"
 instead. This will generate the tag file in background.
 
 
+If you find any bug, please report it to xuhdev@gmail.com, or submit it on the
+issue tracker: http://code.google.com/p/project-tag/issues/list
 
-check the latest code at: http://code.google.com/p/project-tag/source/checkout
-
-If you have any problems, contact xuhdev@gmail.com
-
+Repository: http://code.google.com/p/project-tag/source/checkout
