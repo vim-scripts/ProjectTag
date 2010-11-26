@@ -1,6 +1,7 @@
 # File: ProjectTag/ProjectTag.py
-# Version: 0.1.6
+# Version: 0.1.7
 
+# imports {{{1
 import ConfigParser
 import os
 import re
@@ -11,14 +12,15 @@ import tempfile
 import threading
 import vim
 
+# varibles {{{1
 default_project_name = ''
 tag_thread = None
 
 
+def search_for_file_upper( cur_dir, file_name ): #{{{1
 # search for the file from current directory to upper dir until meet the root
 # directory, return the file's absolute path if found, or return None if not
 # found
-def search_for_file_upper( cur_dir, file_name ):
 
     cur_dir_local = os.path.abspath( cur_dir )
     
@@ -30,16 +32,18 @@ def search_for_file_upper( cur_dir, file_name ):
 
         # if condition does not meet, go upper
         upper_cur_dir_local = os.path.dirname( cur_dir_local )
-        if upper_cur_dir_local == cur_dir_local: # if this is the root directory
+
+        # if this is the root directory, then return None
+        if upper_cur_dir_local == cur_dir_local: 
             return None
 
         cur_dir_local = upper_cur_dir_local
 
 
 
+def get_included_files( filelines ): #{{{1
 # get include files (#include <somefile> or #include "somefile")
 # from a list of file lines
-def get_included_files( filelines ): 
 
     ret = set()
 
@@ -61,9 +65,10 @@ def get_included_files( filelines ):
 
     return ret
 
+def __get_included_files_reclusively( src, include_dirs, checked_files ):#{{{1
 # get the included file of a c/c++ source file and it's included file(internal
 # use)
-def __get_included_files_reclusively( src, include_dirs, checked_files ):
+
     # if current file has been checked, return an empty set
     if src in checked_files:
         return set()
@@ -82,7 +87,8 @@ def __get_included_files_reclusively( src, include_dirs, checked_files ):
     # get the included file paths
     header_files = get_included_files( f.readlines() )
 
-    # add the directory where the source file locates to include directory list
+    # add the directory where the source file locates to include directory
+    # list
     include_dirs2 = include_dirs[:]
     include_dirs2.append( os.path.dirname( src ) )
     for include_dir in include_dirs2:
@@ -105,19 +111,21 @@ def __get_included_files_reclusively( src, include_dirs, checked_files ):
 
     return ret
 
+def get_included_files_reclusively( src, include_dirs ): #{{{1
 # get the included file of a c/c++ source file and it's included file
-def get_included_files_reclusively( src, include_dirs ):
+
     return __get_included_files_reclusively( src, include_dirs, set() )
 
 
 
+def generate_tags_ctags( file_set, outfile, flags, #{{{1
+        tag_prog_cmd='ctags' ):
 # generate tags from file_set, write the result to outfile
 # params: 
 # file_set: file to generate tags for
 # outfile: the output file
 # tag_prog_cmd: command to call the tag program, such as /usr/bin/ctags, etc
 # flags: tag generation flags
-def generate_tags_ctags( file_set, outfile, flags, tag_prog_cmd='ctags' ):
 
     file_list = ''
     for fi in file_set:
@@ -133,18 +141,18 @@ def generate_tags_ctags( file_set, outfile, flags, tag_prog_cmd='ctags' ):
 
     return
 
+class ProjectConfig( ConfigParser.ConfigParser ):#{{{1
 # the config parser for project ini file
-class ProjectConfig( ConfigParser.ConfigParser ):
-    # init, the argument project_file_name is the name of project file, not
-    # the full path. the function will search upper to find this file
 
     # the directory where the project file locates
     project_dir = None
 
-    def does_config_file_exist( self ):
+    def does_config_file_exist( self ):#{{{2
         return self.project_dir != None
 
-    def __init__( self, project_file_name ):
+    def __init__( self, project_file_name ):#{{{2
+    # init, the argument project_file_name is the name of project file, not
+    # the full path. the function will search upper to find this file
 
         ConfigParser.ConfigParser.__init__( self )
 
@@ -159,8 +167,8 @@ class ProjectConfig( ConfigParser.ConfigParser ):
         self.set_project_config_parser_default_value()
 
 
+    def generate_tags( self ):#{{{2
     # generate tags
-    def generate_tags( self ):
 
         # do nothing if config file does not exist
         if not self.does_config_file_exist():
@@ -187,7 +195,7 @@ class ProjectConfig( ConfigParser.ConfigParser ):
         
 
     # set the option to default value if the user does not set it
-    def __set_option_if_not_have( self, section, option, defaultval ):
+    def __set_option_if_not_have( self, section, option, defaultval ):#{{{2
         if not self.has_section( section ):
             self.add_section( section )
 
@@ -196,8 +204,9 @@ class ProjectConfig( ConfigParser.ConfigParser ):
 
         return
 
+    def add_tag_file( self ):#{{{2
     # find the tags output file and add it to tags
-    def add_tag_file( self ):
+
         # do nothing if config file does not exist
         if not self.does_config_file_exist():
             return
@@ -207,7 +216,7 @@ class ProjectConfig( ConfigParser.ConfigParser ):
         vim.command( "let &l:tags=&l:tags.',"+tag_path+"'" )
 
 
-    def set_project_config_parser_default_value( self ):
+    def set_project_config_parser_default_value( self ):#{{{2
         self.__set_option_if_not_have( 'general','include_dirs','' )
         self.__set_option_if_not_have( 'general','sources','' )
         self.__set_option_if_not_have( 'general','tagprog','ctags' )
@@ -216,8 +225,8 @@ class ProjectConfig( ConfigParser.ConfigParser ):
         self.__set_option_if_not_have( 'general','tagoutput','tags.prom' )
         self.__set_option_if_not_have( 'general','auto_timeout','0' )
         
+    def get_files_to_tag( self ):#{{{2
     # return a list of files to tag
-    def get_files_to_tag( self ):
 
         # do nothing if config file does not exist
         if not self.does_config_file_exist():
@@ -252,7 +261,7 @@ class ProjectConfig( ConfigParser.ConfigParser ):
 
 
 # called by s:GenerateProjectTags( back_ground )
-def generate_pro_tags( back_ground ):
+def generate_pro_tags( back_ground ):#{{{1
 
     global tag_thread
     global default_project_name
@@ -294,3 +303,8 @@ def generate_pro_tags( back_ground ):
     pc.add_tag_file()
 
     pc = None
+
+
+#}}}
+
+# vim: fdm=marker et ts=4 sw=4 tw=78

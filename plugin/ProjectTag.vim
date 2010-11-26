@@ -1,5 +1,5 @@
 " File: plugin/ProjectTag.vim
-" Version: 0.1.6
+" Version: 0.1.7
 " GetLatestVimScripts: 3219 1 :AutoInstall: ProjectTag.zip
 " check doc/ProjectTag.txt for more version information
 
@@ -21,7 +21,8 @@ let s:saved_cpo = &cpo
 set cpo&vim
 
 " initialization {{{1
-let s:py_dir = substitute(findfile('ProjectTag/ProjectTag.py', &rtp), '/ProjectTag.py', '', '')
+let s:py_dir = substitute(findfile('ProjectTag/ProjectTag.py', &rtp),
+            \'/ProjectTag.py', '', '')
 
 let s:default_project_name = 'project.prom'
 
@@ -51,18 +52,20 @@ try:
     pc.add_tag_file()
     del pc
 
-except ImportError: # if required python packages are not found, then don't generate tags.
-    vim.command( '''
-    command GenProTags echohl ErrorMsg | echo "Some python packages required by
-                \\ ProjectTag are missing on your system. Install these missing packages and
-                \\ restart vim to enable this plugin." | echohl None''')
+# if required python packages are not found, then don't generate tags.
+except ImportError:
+    vim.command(
+    'command GenProTags echohl ErrorMsg | echo "Some python packages required'
+    ' by ProjectTag are missing on your system. Install these missing '
+    'packages and restart vim to enable this plugin." | echohl None')
 
-    vim.command( '''
-    command GenProTagsBg echohl ErrorMsg | echo "Some python packages required by
-                \\ ProjectTag are missing on your system. Install these missing packages and
-                \\ restart vim to enable this plugin." | echohl None''')
+    vim.command( 
+    'command GenProTagsBg echohl ErrorMsg | echo "Some python packages required'
+    ' by ProjectTag are missing on your system. Install these missing '
+    'packages and restart vim to enable this plugin." | echohl None')
 
-    vim.command('let s:does_finish_flag = 1') # if need to finish, set s:does_finish to 1
+    # if need to finish, set s:does_finish to 1
+    vim.command('let s:does_finish_flag = 1')
 
 EEOOFF
 
@@ -73,7 +76,8 @@ endif
 
 " autocmd {{{1
 " automatically add the tags file when entering a buffer
-autocmd BufEnter * python ProjectTag.ProjectConfig( vim.eval('s:default_project_name') ).add_tag_file()
+autocmd BufEnter * python ProjectTag.ProjectConfig(
+            \vim.eval('s:default_project_name') ).add_tag_file()
 " regard project.prom as ini files
 autocmd BufEnter project.prom setlocal ft=dosini
 
@@ -96,4 +100,4 @@ command GenProTagsBg call s:GenerateProjectTags(1)
 
 let &cpo = s:saved_cpo
 
-" vim: fdm=marker
+" vim: fdm=marker et ts=4 sw=4 tw=78
