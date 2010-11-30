@@ -1,5 +1,5 @@
 # File: ProjectTag/ProjectTag.py
-# Version: 0.1.7
+# Version: 0.1.8
 
 # imports {{{1
 import ConfigParser
@@ -135,7 +135,6 @@ def generate_tags_ctags( file_set, outfile, flags, #{{{1
     # create ctags process, which reads file names from stdin
     sp = subprocess.Popen( tag_prog_cmd + ' -L - ' + flags + ' -f '+ outfile,
             shell=True, stdin=subprocess.PIPE )
-
     # put the file names to stdin of ctags
     sp.communicate( input = file_list )
 
@@ -213,7 +212,8 @@ class ProjectConfig( ConfigParser.ConfigParser ):#{{{1
 
         tagoutput = self.get( 'general', 'tagoutput' ).strip()
         tag_path = self.project_dir + os.path.sep + tagoutput
-        vim.command( "let &l:tags=&l:tags.',"+tag_path+"'" )
+        vim.command( "setlocal tags+=" + 
+                vim.eval( r"escape('" + tag_path + r"', '\ |')" ) )
 
 
     def set_project_config_parser_default_value( self ):#{{{2

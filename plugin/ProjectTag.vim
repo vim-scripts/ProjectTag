@@ -1,5 +1,5 @@
 " File: plugin/ProjectTag.vim
-" Version: 0.1.7
+" Version: 0.1.8
 " GetLatestVimScripts: 3219 1 :AutoInstall: ProjectTag.zip
 " check doc/ProjectTag.txt for more version information
 
