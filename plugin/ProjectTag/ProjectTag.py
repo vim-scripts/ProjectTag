@@ -1,5 +1,5 @@
 # File: ProjectTag/ProjectTag.py
-# Version: 0.1.8
+# Version: 0.1.9
 
 # imports {{{1
 import ConfigParser
@@ -47,7 +47,7 @@ def get_included_files( filelines ): #{{{1
 
     ret = set()
 
-    rematch = re.compile( r'#include[ \t]*[<"][^<>"]+[>"]' )
+    rematch = re.compile( r'#[ \t]*include[ \t]*[<"][^<>"]+[>"]' )
     refind = re.compile( r'(?<=[<"])[^<>"]+(?=[>"])' )
 
     for line in filelines:

@@ -1,5 +1,5 @@
 " File: plugin/ProjectTag.vim
-" Version: 0.1.8
+" Version: 0.1.9
 " GetLatestVimScripts: 3219 1 :AutoInstall: ProjectTag.zip
 " check doc/ProjectTag.txt for more version information
 
@@ -21,7 +21,7 @@ let s:saved_cpo = &cpo
 set cpo&vim
 
 " initialization {{{1
-let s:py_dir = substitute(findfile('ProjectTag/ProjectTag.py', &rtp),
+let s:py_dir = substitute(findfile('plugin/ProjectTag/ProjectTag.py', &rtp),
             \'/ProjectTag.py', '', '')
 
 let s:default_project_name = 'project.prom'

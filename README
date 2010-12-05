@@ -72,6 +72,8 @@ Use vim to open a source file, such as foo.cpp. Use the command
 you don't want to be blocked when generating the tag file, use ":GenProTagsBg"
 instead. This will generate the tag file in background.
 
+Make sure that your project path does not contain spaces, or it wouldn't work.
+
 
 If you find any bug, please report it to xuhdev@gmail.com, or submit it on the
 issue tracker: http://code.google.com/p/project-tag/issues/list
