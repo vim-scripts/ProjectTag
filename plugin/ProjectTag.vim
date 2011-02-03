@@ -1,5 +1,5 @@
 " File: plugin/ProjectTag.vim
-" Version: 0.1.9
+" Version: 0.1.10
 " GetLatestVimScripts: 3219 1 :AutoInstall: ProjectTag.zip
 " check doc/ProjectTag.txt for more version information
 
@@ -8,6 +8,14 @@ if v:version < 700
 endif
 
 if !has('python')
+    command GenProTags 
+                \echohl ErrorMsg | 
+                \echo 'ProjectTag: Python is not enabled in your vim.'.
+                \' This plugin would not be enabled.' | echohl None
+    command GenProTagsBg
+                \echohl ErrorMsg | 
+                \echo 'ProjectTag Python is not enabled in your vim.'.
+                \' This plugin would not be enabled.' | echohl None
     finish
 endif
 
@@ -55,14 +63,16 @@ try:
 # if required python packages are not found, then don't generate tags.
 except ImportError:
     vim.command(
-    'command GenProTags echohl ErrorMsg | echo "Some python packages required'
-    ' by ProjectTag are missing on your system. Install these missing '
-    'packages and restart vim to enable this plugin." | echohl None')
+    'command GenProTags echohl ErrorMsg | echo '
+    '"ProjectTag: Some python packages required by ProjectTag are missing '
+    'on your system. Install these missing packages and restart vim to'
+    ' enable this plugin." | echohl None' )
 
     vim.command( 
-    'command GenProTagsBg echohl ErrorMsg | echo "Some python packages required'
-    ' by ProjectTag are missing on your system. Install these missing '
-    'packages and restart vim to enable this plugin." | echohl None')
+    'command GenProTagsBg echohl ErrorMsg | echo '
+    '"ProjectTag: Some python packages required by ProjectTag are missing '
+    'on your system. Install these missing packages and restart vim to'
+    ' enable this plugin." | echohl None' )
 
     # if need to finish, set s:does_finish to 1
     vim.command('let s:does_finish_flag = 1')
@@ -99,5 +109,6 @@ command GenProTagsBg call s:GenerateProjectTags(1)
 
 
 let &cpo = s:saved_cpo
+unlet! s:saved_cpo
 
 " vim: fdm=marker et ts=4 sw=4 tw=78

@@ -1,5 +1,5 @@
 # File: ProjectTag/ProjectTag.py
-# Version: 0.1.9
+# Version: 0.1.10
 
 # imports {{{1
 import ConfigParser
@@ -72,14 +72,14 @@ def __get_included_files_reclusively( src, include_dirs, checked_files ):#{{{1
     # if current file has been checked, return an empty set
     if src in checked_files:
         return set()
-    
+
     # set current file as checked
     checked_files.add( src )
 
     try:
-        f = open( src,'r' )
+        f = open( src, 'r' )
     except IOError, message:
-        print >> sys.stderr, "can not open file "+src, message
+        print >> sys.stderr, "ProjectTag: Can not open file "+src, message
         return set()
 
     ret = set()
@@ -134,11 +134,17 @@ def generate_tags_ctags( file_set, outfile, flags, #{{{1
 
     # create ctags process, which reads file names from stdin
     sp = subprocess.Popen( tag_prog_cmd + ' -L - ' + flags + ' -f '+ outfile,
-            shell=True, stdin=subprocess.PIPE )
+            shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            stderr = subprocess.PIPE )
+
     # put the file names to stdin of ctags
     sp.communicate( input = file_list )
 
-    return
+    # wait the process to terminate
+    while sp.returncode == None:
+        pass
+
+    return sp.returncode
 
 class ProjectConfig( ConfigParser.ConfigParser ):#{{{1
 # the config parser for project ini file
@@ -179,7 +185,15 @@ class ProjectConfig( ConfigParser.ConfigParser ):#{{{1
         tagprog = self.get( 'general', 'tagprog' )
         temp_tagoutput = tagoutput + '.tmp'
         file_set = self.get_files_to_tag()
-        generate_tags_ctags( file_set, temp_tagoutput, tagflag, tagprog )
+
+        # generate tag file and check the return code of ctags
+        ctags_returncode = generate_tags_ctags( file_set, temp_tagoutput, 
+                tagflag, tagprog )
+        if  ctags_returncode != 0:
+            print >> sys.stderr, \
+                    "ProjectTag: Ctags' return code is not zero, but " +\
+                    str( ctags_returncode ) + "."
+            return False
         
         if os.path.isfile( tagoutput ):
             try:
@@ -188,7 +202,11 @@ class ProjectConfig( ConfigParser.ConfigParser ):#{{{1
                 print >> sys.stderr, 'Can not delete '+tagoutput, message
                 return False
 
-        shutil.move( temp_tagoutput, tagoutput )
+        try:
+            shutil.move( temp_tagoutput, tagoutput )
+        except IOError, message:
+            print >> sys.stderr, 'ProjectTag: Cannot move file "' + \
+                    temp_tagoutput + '" to "' + tagoutput + '" ', message
 
         return True
         
@@ -271,7 +289,7 @@ def generate_pro_tags( back_ground ):#{{{1
     # if the config file does not exist, return immediately
     if not pc.does_config_file_exist():
         vim.command( 'echohl ErrorMsg |\
-                echo "Project file not found!" | echohl None' )
+                echo "ProjectTag: Project file not found!" | echohl None' )
         pc = None
         return
 
@@ -288,8 +306,8 @@ def generate_pro_tags( back_ground ):#{{{1
         tag_thread.start()
     except RuntimeError:
         vim.command( 'echohl ErrorMsg |\
-                echo "Failed to start the tag generating thread!" |\
-                echohl None' )
+                echo "ProjectTag: Failed to start the tag generating thread!"\
+                | echohl None' )
         pc = None
         return
 
@@ -307,4 +325,5 @@ def generate_pro_tags( back_ground ):#{{{1
 
 #}}}
 
-# vim: fdm=marker et ts=4 sw=4 tw=78
+# vim: fdm=marker et ts=4 sw=4 tw=78 fdc=3
+
